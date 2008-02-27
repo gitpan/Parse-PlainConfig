@@ -1,0 +1,26 @@
+Parse::PlainConfig
+==================
+
+Author: Arthur Corliss
+Date:  May 26, 2006
+
+Description:
+------------
+
+This is a long overdue complete rewrite.  It has a lot of feature improvements
+along with much cleaner and robust coding.
+
+Instructions:
+-------------
+
+Like all CPAN modules, just enter the following commands:
+
+	$ perl Makefile.PL
+	$ make
+	$ make test
+	$ make install
+
+If you wish to see sample code using the module, please examine test files in
+the t directory.  A sample rc file is there as well, which shows the
+robustness of the parser.
+

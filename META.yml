@@ -1,0 +1,16 @@
+--- #YAML:1.0
+name:                Parse-PlainConfig
+version:             2.04
+abstract:            Parser/Generator of human-readable conf files
+license:             ~
+generated_by:        ExtUtils::MakeMaker version 6.36
+distribution_type:   module
+requires:     
+    Paranoid:                      
+    Text::ParseWords:              
+    Text::Tabs:                    
+meta-spec:
+    url:     http://module-build.sourceforge.net/META-spec-v1.2.html
+    version: 1.2
+author:
+    - Arthur Corliss <corliss@digitalmages.com>

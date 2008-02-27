@@ -1,0 +1,26 @@
+Makefile.PL
+lib/Parse/PlainConfig.pm
+CHANGELOG
+CREDITS
+README
+LICENSE
+MANIFEST
+t/01_ini.t
+t/02_property.t
+t/03_read.t
+t/04_parameters.t
+t/05_purge.t
+t/06_scalar.t
+t/07_list.t
+t/08_hash.t
+t/09_coerce.t
+t/10_write.t
+t/11_order.t
+t/12_purge.t
+t/13_readIfNewer.t
+t/14_compat.t
+t/15_defaults.t
+t/16_hasParameter.t
+t/testrc
+t/testrc_smart
+META.yml                                 Module meta-data (added by MakeMaker)

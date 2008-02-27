@@ -1,0 +1,18 @@
+v2.02 (2006/07/25)
+------------------
+--Fixed AUTOPURGE (didn't work since it was looking for old key PURGE)
+--Added new method readIfNewer
+
+v2.01 (2006/07/21)
+------------------
+--Forgot to implement documented MAX_BYTES.  Fixed.
+--Wasn't saving all errors to Parse::PlainConfig::ERROR as documented.  Fixed.
+
+v2.0 (2006/05/26)
+-----------------
+--Complete rewrite
+--Built against Paraniod::* modules
+--Internal diagnostics provided via Paraniod::Debug
+--Smart parser mode added
+--Forced coercion now available for all datatypes (strings, lists, hashes)
+--Lists and hash delimiters can now be user-defined
