@@ -2,7 +2,7 @@
 #
 # (c) 2002 - 2006, Arthur Corliss <corliss@digitalmages.com>,
 #
-# $Id: PlainConfig.pm,v 2.04 2006/12/05 18:36:54 acorliss Exp $
+# $Id: PlainConfig.pm,v 2.06 2008/07/07 22:59:35 acorliss Exp $
 #
 # This program is free software; you can redistribute it and/or modify
 # it under the terms of the GNU General Public License as published by
@@ -26,7 +26,7 @@ Parse::PlainConfig - Parser for plain-text configuration files
 
 =head1 MODULE VERSION
 
-$Id: PlainConfig.pm,v 2.04 2006/12/05 18:36:54 acorliss Exp $
+$Id: PlainConfig.pm,v 2.06 2008/07/07 22:59:35 acorliss Exp $
 
 =head1 SYNOPSIS
 
@@ -96,9 +96,21 @@ They will likely be removed at some point in the future.
 
 =head1 REQUIREMENTS
 
+=over
+
+=item *
+
 Paranoid
+
+=item *
+
 Text::ParseWords
+
+=item *
+
 Text::Tabs
+
+=back
 
 =head1 DESCRIPTION
 
@@ -125,7 +137,7 @@ use Paranoid::Debug;
 use Paranoid::Filesystem;
 use Paranoid::Input;
 
-($VERSION) = (q$Revision: 2.04 $ =~ /(\d+(?:\.(\d+))+)/);
+($VERSION) = (q$Revision: 2.06 $ =~ /(\d+(?:\.(\d+))+)/);
 
 #####################################################################
 #
@@ -322,7 +334,7 @@ sub new {
   my %args = @_;
   my (@keyList, $k, $v, $rv);
 
-  pdebug("Entering Parse::PlainConfig::new", 7);
+  pdebug("entering", 7);
   pIn();
 
   bless $self, $class;
@@ -345,7 +357,7 @@ sub new {
   }
 
   pOut();
-  pdebug("Leaving Parse::PlainConfig::new w/rv: $v", 7);
+  pdebug("leaving w/rv: $v", 7);
 
   return $self;
 }
@@ -380,11 +392,10 @@ sub property ($$;$) {
   croak "Parse::PlainConfig::property was called with an unknown property" .
     "($arg)" unless exists $$self{$arg} or $arg eq 'FORCE_SCALAR';
 
-  pdebug("Entering Parse::PlainConfig::property with ($arg)($ival)", 7);
+  pdebug("entering w/($arg)($ival)", 7);
   pIn();
 
-  pdebug("Parse::PlainConfig::property is in " . (scalar @args == 2 ? 'set' :
-    'get') . " mode", 7);
+  pdebug("method is in " . (scalar @args == 2 ? 'set' : 'get') . " mode", 7);
   $arg = uc($arg);
 
   # TODO 2008/05/11: properties deprecated, remove FORCE_SCALAR, DELIM, PURGE
@@ -396,24 +407,22 @@ sub property ($$;$) {
     if ($arg =~ /^(?:ORDER|FORCE_SCALAR)$/) {
       unless (ref($val) eq 'ARRAY') {
         $rv = 0;
-        ERROR = pdebug("Parse::PlainConfig::property: ${arg}'s value " .
-          "must be a list reference", 7);
+        ERROR = pdebug("${arg}'s value must be a list reference", 7);
       }
 
     # Hash properties are hash references
     } elsif ($arg =~ /^(?:CONF|COERCE|DEFAULTS)$/) {
       unless (ref($val) eq 'HASH') {
         $rv = 0;
-        ERROR = pdebug("Parse::PlainConfig::property: ${arg}'s value " .
-          "must be a hash reference", 7);
+        ERROR = pdebug("${arg}'s value must be a hash reference", 7);
       }
 
       # Validate coerced values
       if ($rv && $arg eq 'COERCE') {
         foreach (keys %$val) {
           $ival = defined $$val{$_} ? $$val{$_} : 'undef';
-          ERROR = pdebug("Parse::PlainConfig::property: coerced data " .
-            "type ($_: $ival) not a string, list, or hash") and $rv = 0 unless
+          ERROR = pdebug("coerced data type ($_: $ival) not a string, " .
+            "list, or hash") and $rv = 0 unless 
             $ival =~ /^(?:string|list|hash)$/;
         }
       }
@@ -423,8 +432,7 @@ sub property ($$;$) {
     # TODO?  valid values?
     } elsif (ref($val) ne '') {
       $rv = 0;
-      ERROR = pdebug("Parse::PlainConfig::property: ${arg}'s " .
-        "value must be a scalar value", 7);
+      ERROR = pdebug("${arg}'s value must be a scalar value", 7);
     }
   }
 
@@ -442,7 +450,7 @@ sub property ($$;$) {
   }
 
   pOut();
-  pdebug("Leaving Parse::PlainConfig::property w/rv: $rv", 7);
+  pdebug("leaving w/rv: $rv", 7);
 
   return $rv;
 }
@@ -477,21 +485,21 @@ sub purge($$) {
   my $arg   = shift;
 
   $arg = 'undef' unless defined $arg;
-  pdebug("Entering Parse::PlainConfig::purge with ($arg)", 7);
+  pdebug("entering w/($arg)", 7);
   pIn();
 
   # TODO: 2008/05/11: property set invocation deprecated, remove
 
   if ($arg ne 'undef') {
-    pdebug("Parse::PlainConfig::purge: setting AUTOPURGE to $arg", 7);
+    pdebug("setting AUTOPURGE to $arg", 7);
     $self->property('AUTOPURGE', $arg);
   } else {
-    pdebug("Parse::PlainConfig::purge: clearing CONF", 7);
+    pdebug("clearing CONF", 7);
     $$self{CONF}  = {};
   }
 
   pOut();
-  pdebug("Leaving Parse::PlainConfig::purge w/rv: 1", 7);
+  pdebug("leaving w/rv: 1", 7);
 
   return 1;
 }
@@ -530,7 +538,7 @@ sub read($;$) {
   croak "Parse::PlainConfig::read called an undefined filename" unless
     defined $file;
 
-  pdebug("Entering Parse::PlainConfig::read with ($file)", 7);
+  pdebug("entering w/($file)", 7);
   pIn();
 
   # Reset the error string and update the internal filename
@@ -559,7 +567,7 @@ sub read($;$) {
   FSZLIMIT = $oldSize;
 
   pOut();
-  pdebug("Leaving Parse::PlainConfig::read w/rv: $rv", 7);
+  pdebug("leaving w/rv: $rv", 7);
 
   # Return the result code
   return $rv;
@@ -590,7 +598,7 @@ sub readIfNewer($) {
   croak "Parse::PlainConfig::readIfNewer called an undefined filename" unless
     defined $file;
 
-  pdebug("Entering Parse::PlainConfig::readIfNewer with ($file)", 7);
+  pdebug("entering w/($file)", 7);
   pIn();
 
   # Make sure the file exists and is readable
@@ -598,8 +606,7 @@ sub readIfNewer($) {
 
     # Read if the file appears to be newer
     $mtime = (stat _)[9];
-    pdebug("Parse::PlainConfig::readIfNewer: current mtime: $mtime last: " . 
-      "$omtime", 7);
+    pdebug("current mtime: $mtime last: $omtime", 7);
     $rv = $mtime > $omtime ? $self->read : 2;
 
   # Report errors
@@ -609,7 +616,7 @@ sub readIfNewer($) {
   }
 
   pOut();
-  pdebug("Leaving Parse::PlainConfig::readIfNewer w/rv: $rv", 7);
+  pdebug("leaving w/rv: $rv", 7);
 
   # Return the result code
   return $rv;
@@ -662,20 +669,20 @@ sub write($;$$) {
   $padding = 2 unless defined $padding;
   $tw -= 2 unless $smart;
 
-  pdebug("Entering Parse::PlainConfig::write with ($file)($padding)", 7);
+  pdebug("entering w/($file)($padding)", 7);
   pIn();
 
   # Pad the delimiter as specified
   $paramDelim = $padding == 0 ? $paramDelim : $padding == 1 ? " $paramDelim" : 
     $padding == 2 ? "$paramDelim " : " $paramDelim ";
-  pdebug("Parse::PlainConfig::write: PARAM_DELIM w/padding is '$paramDelim'", 
+  pdebug("PARAM_DELIM w/padding is '$paramDelim'", 
     7);
 
   # Create a list of parameters for output
   @forder = @$order;
   foreach $tmp (sort keys %$conf) { push (@forder, $tmp) unless 
     grep /^\Q$tmp\E$/, @forder };
-  pdebug("Parse::PlainConfig::write: order of params to be " .
+  pdebug("order of params to be " .
     "written:\n\t@forder", 7);
 
   # Compose the new output
@@ -688,7 +695,7 @@ sub write($;$$) {
     $type         = exists $$coerce{$param} ? $$coerce{$param} : 
       ref($value) eq 'HASH' ?  'hash' : ref($value) eq 'ARRAY' ?  
       'list' : 'string';
-    pdebug("Parse::PlainConfig::write: adding $type param ($param)", 7);
+    pdebug("adding $type param ($param)", 7);
 
     # Append the comments
     $out .= $description;
@@ -741,30 +748,37 @@ sub write($;$$) {
   }
 
   # Attempt to open the file
-  if (open(RCFILE, "> $file")) {
+  if (detaint($file, 'filename', \$file)) {
+    if (open(RCFILE, "> $file")) {
 
-    # Write the file
-    flock(RCFILE, LOCK_EX);
-    if (print RCFILE $out) {
-      $rv = 1;
+      # Write the file
+      flock(RCFILE, LOCK_EX);
+      if (print RCFILE $out) {
+        $rv = 1;
+      } else {
+        ERROR = $!;
+      }
+      flock(RCFILE, LOCK_UN);
+      close(RCFILE);
+
+      # Store the new mtime on successful writes
+      $$self{MTIME} = (stat $file)[9] if $rv;
+
+    # Opening the file failed
     } else {
-      ERROR = $!;
+      ERROR = "Parse::PlainConfig::write: Error writing file: $!";
     }
-    flock(RCFILE, LOCK_UN);
-    close(RCFILE);
 
-    # Store the new mtime on successful writes
-    $$self{MTIME} = (stat $file)[9] if $rv;
-
-  # Opening the file failed
+  # Detainting filename failed
   } else {
-    ERROR = "Parse::PlainConfig::write: Error writing file: $!";
+    ERROR = "Parse::PlainConfig::write: illegal characters in filename: " .
+      $file;
   }
 
   pOut();
-  pdebug("Leaving Parse::PlainConfig::write w/rv: $rv", 7);
+  pdebug("leaving w/rv: $rv", 7);
 
-  return 1;
+  return $rv;
 }
 
 =head2 parameters
@@ -835,11 +849,11 @@ sub parameter($$;$) {
   croak "Parse::PlainConfig::parameter was called with an undefined parameter"
     unless defined $param;
 
-  pdebug("Entering Parse::PlainConfig::parameter with ($param)($ivalue)", 7);
+  pdebug("entering w/($param)($ivalue)", 7);
   pIn();
 
   if (scalar @args == 2) {
-    pdebug("Parse::PlainConfig::parameter in set mode", 7);
+    pdebug("method in set mode", 7);
 
     # Create a blank record if it hasn't been defined yet
     $$conf{$param} = {
@@ -849,7 +863,7 @@ sub parameter($$;$) {
 
     # Start processing value assignment
     if ($coerceType ne 'undef') {
-      pdebug("Parse::PlainConfig::parameter: coercing into $coerceType", 7);
+      pdebug("coercing into $coerceType", 7);
 
       # Coerce values into strings
       if ($coerceType eq 'string' && ref($value) ne '') {
@@ -926,21 +940,20 @@ sub parameter($$;$) {
       }
 
     } else {
-      pdebug("Parse::PlainConfig::parameter: no coercion to do", 7);
+      pdebug("no coercion to do", 7);
       $finalValue = $value;
     }
     $$conf{$param}{Value} = $finalValue;
 
   } else {
-    pdebug("Parse::PlainConfig::parameter in retrieve mode", 7);
+    pdebug("method in retrieve mode", 7);
     $rv = exists $$conf{$param} ? $$conf{$param}{Value} : 
       exists $$defaults{$param} ? $$defaults{$param} :
       undef;
   }
 
   pOut();
-  pdebug("Leaving Parse::PlainConfig::parameter w/rv: " . (defined $rv ? $rv :
-    'undef'), 7);
+  pdebug("leaving w/rv: " . (defined $rv ? $rv : 'undef'), 7);
 
   return ref($rv) eq 'HASH' ? (%$rv) : ref($rv) eq 'ARRAY' ? (@$rv) : $rv;
 }
@@ -966,7 +979,7 @@ sub coerce($$@) {
   croak "Parse::PlainConfig::coerce called with no named parameters" unless
     @params;
 
-  pdebug("Entering Parse::PlainConfig::coerce with ($itype)(@params)", 7);
+  pdebug("entering w/($itype)(@params)", 7);
   pIn();
 
   foreach (@params) {
@@ -975,7 +988,7 @@ sub coerce($$@) {
   }
 
   pOut();
-  pdebug("Leaving Parse::PlainConfig::coerce w/rv: 1", 7);
+  pdebug("leaving w/rv: 1", 7);
 }
 
 =head2 describe
@@ -995,7 +1008,7 @@ sub describe($@) {
   my $coerce  = $$self{COERCE};
   my %new     = (@_);
 
-  pdebug("Entering Parse::PlainConfig::describe", 7);
+  pdebug("entering", 7);
   pIn();
 
   # TODO: Consider allowing comment tags to be specified
@@ -1004,7 +1017,7 @@ sub describe($@) {
   # TODO: it's not already done.
 
   foreach (keys %new) {
-    pdebug("Parse::PlainConfig::describe:  $_ is described as '$new{$_}'", 7);
+    pdebug("$_ is described as '$new{$_}'", 7);
     unless (exists $$conf{$_}) {
       $$conf{$_} = {};
       if (exists $$coerce{$_}) {
@@ -1018,7 +1031,7 @@ sub describe($@) {
   }
 
   pOut();
-  pdebug("Leaving Parse::PlainConfig::describe w/rv: 1", 7);
+  pdebug("leaving w/rv: 1", 7);
 
   return 1;
 }
@@ -1046,11 +1059,11 @@ sub order($@) {
   my $order = $$self{ORDER};
   my @new   = (@_);
 
-  pdebug("Entering Parse::PlainConfig::order with (@new)", 7);
+  pdebug("entering w/(@new)", 7);
 
   @$order = (@new) if scalar @new;
 
-  pdebug("Leaving Parse::PlainConfig::order w/rv: @$order", 7);
+  pdebug("leaving w/rv: @$order", 7);
 
   return @$order;
 }
@@ -1078,7 +1091,7 @@ sub _parse($@) {
   croak "LIST_DELIM and HASH_DELIM cannot be the same character sequence!\n"
     unless $$self{LIST_DELIM} ne $$self{HASH_DELIM};
 
-  pdebug("Entering Parse::PlainConfig::_parse", 8);
+  pdebug("entering", 8);
   pIn();
 
   # Flatten lines using an explicit backslash
@@ -1089,8 +1102,7 @@ sub _parse($@) {
     no warnings 'uninitialized';
 
     if ($lines[$i] =~ /\\\s*$/) {
-      pdebug("Parse::PlainConfig::_parse: joining lines @{[ $i + 1 ]} " .
-        "\& @{[ $i + 2 ]}", 8);
+      pdebug("joining lines @{[ $i + 1 ]} " .  "\& @{[ $i + 2 ]}", 8);
       
       # Lop off the trailing whitespace and backslash, preserving
       # only one space on the assumption that if it's there it's a
@@ -1116,7 +1128,7 @@ sub _parse($@) {
 
       ($field, $value) = 
         ($entry =~ /^\s*([^$tagDelim]+?)\s*\Q$tagDelim\E\s*(.*)$/);
-      pdebug("Parse::PlainConfig::_parse: saving data:\n\t($field: $value)", 8);
+      pdebug("saving data:\n\t($field: $value)", 8);
 
       # Get the field data type from COERCE if set
       if (exists $$self{COERCE}{$field}) {
@@ -1128,7 +1140,7 @@ sub _parse($@) {
           'hash' : scalar quotewords(qr/\s*\Q$listDelim\E\s*/, 0, $value) > 1 ?
           'list' : 'scalar';
       }
-      pdebug("Parse::PlainConfig::_parse: detected type of $field is $type",
+      pdebug("detected type of $field is $type",
         8);
 
       # We'll apply quotewords to scalar values only if the smart parser is
@@ -1162,7 +1174,7 @@ sub _parse($@) {
 
     # Grab comments and blank lines
     if ($line =~ /^\s*(?:#.*)?$/) {
-      pdebug("Parse::PlainConfig::_parse: comment/blank line:\n\t$line", 9);
+      pdebug("comment/blank line:\n\t$line", 9);
 
       # First save previous entries if $entry has content
       &saveEntry() and $i = 0 if length($entry);
@@ -1177,12 +1189,12 @@ sub _parse($@) {
       # PARAM_DELIM skip the line -- something must be wrong.
       #
       # TODO:  Error out/raise exception
-      pdebug("Parse::PlainConfig::_parse: skipping spurious text:\n\t$line", 
+      pdebug("skipping spurious text:\n\t$line", 
         9) and next unless length($entry) || $line =~ /\Q$tagDelim\E/;
 
       # Grab indentation characters and line content
       ($indentation, $data) = ($line =~ /^(\s*)(.+)$/);
-      pdebug("Parse::PlainConfig::_parse: data line:\n\t$data", 9);
+      pdebug("data line:\n\t$data", 9);
 
       # If smart parsing is enabled
       if ($smart) {
@@ -1218,7 +1230,7 @@ sub _parse($@) {
   &saveEntry() if length($entry);
 
   pOut();
-  pdebug("Leaving Parse::PlainConfig::_parse w/rv: $rv", 8);
+  pdebug("leaving w/rv: $rv", 8);
 
   return $rv;
 }
@@ -1236,7 +1248,7 @@ sub _wrap($$$$$) {
   my $paragraph   = shift;
   my (@lines, $segment, $output);
 
-  pdebug("Entering Parse::PlainConfig::_wrap with ($firstIndent)" .
+  pdebug("entering w/($firstIndent)" .
     "($subIndent)($textWidth)($lineBreak):\n\t$paragraph", 8);
   pIn();
 
@@ -1276,7 +1288,7 @@ sub _wrap($$$$$) {
   $output = join('', @lines);
 
   pOut();
-  pdebug("Leaving Parse::PlainConfig::_wrap w/rv:\n$output", 8);
+  pdebug("leaving w/rv:\n$output", 8);
 
   return $output;
 }
@@ -1302,13 +1314,13 @@ sub hasParameter($$) {
   croak "Parse::PlainConfig::parameter was called with an undefined parameter"
     unless defined $param;
 
-  pdebug("Entering Parse::PlainConfig::hasParameter with ($param)", 7);
+  pdebug("entering w/($param)", 7);
   pIn();
 
   $rv = scalar grep /^\Q$param\E$/, @params;
 
   pOut();
-  pdebug("Leaving Parse::PlainConfig::hasParameter w/rv: $rv", 7);
+  pdebug("leaving w/rv: $rv", 7);
 
   return $rv;
 }

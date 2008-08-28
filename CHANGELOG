@@ -1,3 +1,13 @@
+v2.06 (2008/07/07)
+------------------
+--write method was always reporting true when it's possible that it could
+  fail for various reasons.  Fixed to reflect actual result
+--write method now detaints filename before calling open
+
+v2.05 (2008/04/29)
+------------------
+--Updated debug messages since Paranoid now adds calling function
+
 v2.02 (2006/07/25)
 ------------------
 --Fixed AUTOPURGE (didn't work since it was looking for old key PURGE)

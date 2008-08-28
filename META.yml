@@ -1,6 +1,6 @@
 --- #YAML:1.0
 name:                Parse-PlainConfig
-version:             2.04
+version:             2.06
 abstract:            Parser/Generator of human-readable conf files
 license:             ~
 generated_by:        ExtUtils::MakeMaker version 6.36
